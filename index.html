@@ -185,22 +185,42 @@ h2{font-size:22px;margin:30px 0 10px;letter-spacing:-0.01em}
 .esec.full summary h3::after{content:" ✓";color:var(--ok)}
 .esec.out{opacity:.7}
 .chs{list-style:none;margin:0;padding:4px 8px 10px}
-.chap{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:center;padding:11px 10px;border-radius:6px;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.chapli{border-radius:6px}
+.chapli.hide{display:none}
+.chap{display:grid;grid-template-columns:auto 1fr;align-items:stretch;border-radius:6px;transition:background .15s}
 .chap:hover{background:var(--paper)}
-.chap input{position:absolute;opacity:0;width:1px;height:1px}
-.chap .tk{width:26px;height:26px;border:2px solid var(--dropout);border-radius:7px;display:grid;place-items:center;transition:background .15s,transform .15s}
-.chap .tk svg{width:16px;height:16px;stroke:#fff;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .25s ease .05s}
-.chap input:checked ~ .tk{background:var(--dropout);animation:pop .3s}
-.chap input:checked ~ .tk svg{stroke-dashoffset:0}
-.chap input:focus-visible ~ .tk{outline:3px solid var(--dropout);outline-offset:2px}
-.chap input:disabled ~ .tk{opacity:.5}
-.chap .ct{font-weight:500}
-.chap input:checked ~ .ct{color:var(--muted);text-decoration:line-through}
-.chap .pg{font-size:12px;font-weight:600;color:var(--muted);background:var(--paper);border-radius:99px;padding:2px 9px;white-space:nowrap}
-.chap.hide{display:none}
+.tkl{display:grid;place-items:center;padding:6px 6px 6px 10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tkl input{position:absolute;opacity:0;width:1px;height:1px}
+.tk{width:26px;height:26px;border:2px solid var(--dropout);border-radius:7px;display:grid;place-items:center;transition:background .15s,transform .15s}
+.tk svg{width:16px;height:16px;stroke:#fff;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .25s ease .05s}
+.tkl input:checked ~ .tk{background:var(--dropout);animation:pop .3s}
+.tkl input:checked ~ .tk svg{stroke-dashoffset:0}
+.tkl input:focus-visible ~ .tk{outline:3px solid var(--dropout);outline-offset:2px}
+.tkl input:disabled ~ .tk{opacity:.5}
+.ctb{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;padding:11px 10px 11px 4px;cursor:pointer;color:inherit;font:inherit;border-radius:6px}
+.ctb:focus-visible{outline:3px solid var(--dropout);outline-offset:-2px}
+.ctb .ct{font-weight:500;flex:1}
+.chap.rd .ct{color:var(--muted);text-decoration:line-through}
+.ctb .pg{font-size:12px;font-weight:600;color:var(--muted);background:var(--paper);border-radius:99px;padding:2px 9px;white-space:nowrap}
+.ctb .chev{width:18px;height:18px;flex:none;stroke:var(--muted);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.ctb[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.ebtxt{margin:2px 8px 12px 44px;padding:14px 16px;background:var(--paper);border-left:3px solid var(--dropout);border-radius:0 6px 6px 0;font-size:16px;line-height:1.65;overflow-wrap:anywhere}
+.ebtxt[hidden]{display:none}
+.ebtxt h4{margin:18px 0 6px;font-size:16px;color:var(--dropout)}
+.ebtxt h4:first-child{margin-top:0}
+.ebtxt p{margin:0 0 10px}
+.ebtxt ul{margin:0 0 10px;padding-left:20px}
+.ebtxt li{margin:2px 0}
+.ebtxt figure{margin:10px 0;text-align:center}
+.ebtxt img{max-width:100%;height:auto;border-radius:4px;background:#fff}
+.ebtxt .done{margin-top:12px}
+.ebtxt .msg{color:var(--muted);margin:0}
+.ebadm{margin-top:24px;padding:12px 14px;border:1px dashed var(--line);border-radius:6px;font-size:14px;color:var(--muted)}
+.ebadm input{margin:8px 0;max-width:100%}
+@media (max-width:480px){.ebtxt{margin-left:8px}}
 .esec .all{margin:0 16px 10px;font-size:13px}
 @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.22)}100%{transform:scale(1)}}
-@media (prefers-reduced-motion:reduce){.chap .tk,.chap .tk svg,.esec .pbar i,.ring,.fab,.ebcard{transition:none;animation:none!important}}
+@media (prefers-reduced-motion:reduce){.tk,.tk svg,.esec .pbar i,.ring,.fab,.ebcard{transition:none;animation:none!important}}
 @media (max-width:480px){.ebhero{flex-direction:column;align-items:flex-start}.fab small{display:none}}
 </style>
 </head>
@@ -226,7 +246,7 @@ h2{font-size:22px;margin:30px 0 10px;letter-spacing:-0.01em}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, onSnapshot, setDoc, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 /* =====================================================================
    CONFIGURAÇÃO — preencha antes de subir (veja o LEIAME.md)
@@ -316,20 +336,20 @@ const modVideo = k => LESSONS.filter(L=>L.c===k).reduce((s,L)=>s+L.v,0);
 const EBOOK = [
   {k:'fundos',  t:'Fundos de investimento',               tp:'fundos',   pages:[[2,15]],          anchors:['l-fundos2']},
   {k:'rf',      t:'Renda fixa e produtos bancários',      tp:'rf',       pages:[[16,27]],         anchors:['m-lci','l-pmf']},
-  {k:'acoes',   t:'Ações, ofertas, governança e índices', tp:'acoes',    pages:[[28,56]],         anchors:['m-acoes2','l-ind']},
-  {k:'deriv',   t:'Derivativos e opções',                 tp:'deriv',    pages:[[62,73]],         anchors:['m-deriv','l-opcoes']},
-  {k:'alt',     t:'Alternativos, digitais e exterior',    tp:'alt',      pages:[[57,61],[74,97]], anchors:['l-ndf']},
-  {k:'prev',    t:'Previdência complementar',             tp:'prev',     pages:[[98,107]],        anchors:['l-prev']},
-  {k:'carteira',t:'Gestão de carteira e risco',           tp:'carteira', pages:[[108,133]],       anchors:['l-tit2']},
+  {k:'acoes',   t:'Ações, ofertas, governança e índices', tp:'acoes',    pages:[[27,56]],         anchors:['m-acoes2','l-ind']},
+  {k:'deriv',   t:'Derivativos e opções',                 tp:'deriv',    pages:[[62,74]],         anchors:['m-deriv','l-opcoes']},
+  {k:'alt',     t:'Alternativos, digitais e exterior',    tp:'alt',      pages:[[56,62],[74,97]], anchors:['l-ndf']},
+  {k:'prev',    t:'Previdência complementar',             tp:'prev',     pages:[[97,107]],        anchors:['l-prev']},
+  {k:'carteira',t:'Gestão de carteira e risco',           tp:'carteira', pages:[[107,132]],       anchors:['l-tit2']},
 ];
 const CHAPTERS = {
-  fundos:[['Regras de distribuição, documentos e cotas','2–3'],['Administração, gestão e taxas','3–5'],['Classes de fundos e tributação','5–7'],['ETFs e fundos incentivados','8'],['Fundos imobiliários (FII)','9–12'],['Clubes de investimento','13–14'],['Carteiras administradas','15']],
-  rf:[['Juros no Brasil, Copom e poupança','16–17'],['Preço de mercado e índices de renda fixa','18–19'],['Títulos públicos federais','20'],['Títulos bancários: CDB, LCI, LCA, LC, LF…','20–23'],['Debêntures e garantias','24–26'],['Rentabilidade líquida de um CDB','27']],
-  acoes:[['Tipos de ações, direitos e BDRs','28–29'],['Mercado primário, secundário e riscos','29–30'],['Eventos: subscrição, split, bonificação','31'],['Dividendos, JCP e tributação','32–33'],['IPO, follow-on e fechamento de capital','33–34'],['Quem participa da oferta: banco, custodiante, formador','35–37'],['Subscrição pública e tipos de garantia','38–40'],['Preço na emissão e Código ANBIMA de Ofertas','41–45'],['Bolsa, ordens de negociação e mercado a termo','45–48'],['Governança corporativa e segmentos da B3','49–51, 55–56'],['Índices de ações','51–54']],
-  deriv:[['Derivativos: futuro, swap e garantias','62–64'],['Produtos estruturados e COE','65–68'],['Opções europeias e americanas, precificação','69–70'],['Estratégias com opções e tributação','71–73']],
-  alt:[['Criptoativos','57–61'],['Private equity e venture capital','74–81'],['Crédito privado, FIDC e FIP','82–89'],['Investimentos no exterior: Treasuries, ADRs, índices','90–95'],['NDF e câmbio','96–97']],
-  prev:[['PGBL e VGBL','98–99'],['Regimes de tributação e tipos de renda','100–102'],['Rentabilidade, perfil e suitability','103–105'],['Planos corporativos','105–107']],
-  carteira:[['Cenário macro e indicadores','108–111'],['Monitoramento da carteira','112'],['Eventos de vida, portabilidade e resgate','113–117'],['Tributação e rebalanceamento','117–118'],['Risco e retorno, Markowitz','118–121'],['Correlação, beta e diversificação','121–124'],['Yield, duration e CAPM','125–127'],['Alfa, Sharpe, Sortino e Modigliani','128–132']],
+  fundos:[["Regras de distribuição, documentos e cotas","2–3"],["Administração, gestão e taxas","3–5"],["Classes de fundos e tributação","5–7"],["ETFs e fundos incentivados","8"],["Fundos imobiliários (FII)","8–12"],["FIP, FIDC e ETFs","12–13"],["Clubes de investimento","13–14"],["Carteiras administradas","14–15"]],
+  rf:[["Juros no Brasil, Copom e poupança","16–18"],["Precificação, preço de mercado e índices","18–20"],["Títulos públicos federais","20"],["Títulos bancários: CDB, LCI, LCA, LC, LF…","20–23"],["Debêntures e garantias","24–26"],["Rentabilidade líquida dos títulos","26–27"]],
+  acoes:[["Tipos de ações, direitos e BDRs","27–29"],["Mercado primário, secundário e riscos","29–31"],["Subscrição, grupamento, desdobramento e bonificação","31–32"],["Dividendos, JCP e tributação","32–33"],["IPO, follow-on e fechamento de capital","33–34"],["Quem participa da oferta","34–37"],["Subscrição pública e tipos de garantia","38–41"],["Preço na emissão e Código ANBIMA","41–45"],["Bolsa, ordens de negociação e mercado a termo","45–48"],["Governança corporativa, tag along e free float","49–51"],["Índices de ações","51–55"],["Níveis de governança e critérios de adesão","55–56"]],
+  alt:[["Criptoativos: bitcoin, blockchain e Ethereum","56–59"],["Tokens, stablecoins e NFTs","60–61"],["Mercado cripto e produtos","61–62"],["Private equity e venture capital","74–81"],["Crédito privado, FIDC e FIP","82–90"],["Investimentos no exterior","90–95"],["NDF e câmbio","96–97"]],
+  deriv:[["Derivativos: finalidade e mercado futuro","62–63"],["Opções e swaps","64"],["Produtos estruturados e COE","65–69"],["Opções europeias e americanas, precificação","69–70"],["Estratégias com opções","70–73"],["Tributação em derivativos","73–74"]],
+  prev:[["PGBL e VGBL","97–99"],["Regimes de tributação e tipos de renda","99–103"],["Rentabilidade, perfil e suitability","103–105"],["Planos corporativos","105–107"]],
+  carteira:[["Cenário macro e indicadores","107–111"],["Estrutura da carteira e indicadores de performance","112–113"],["Eventos de vida, portabilidade e resgate","113–118"],["Tributação e rebalanceamento","118"],["Risco e retorno, dominância e Markowitz","118–120"],["Correlação e diversificação","120–123"],["Risco sistemático, Sharpe e alocação de ativos","123–125"],["Yield, duration e CAPM","125–127"],["Alfa, beta e linhas SML e CML","128–130"],["Modigliani, Sortino, VaR e stop loss","130–132"]],
 };
 const chKey = (k,i) => `ebc-${k}-${i}`;
 const ebTotals = prog => { let d=0,t=0; const by={}; for(const E of EBOOK){ const n=CHAPTERS[E.k].length; const x=CHAPTERS[E.k].filter((_,i)=>prog[chKey(E.k,i)]).length; by[E.k]={d:x,t:n}; d+=x; t+=n; } return {d,t,by}; };
@@ -885,10 +905,14 @@ function renderEbook(p, readOnly){
     const firstOpen = st.d<st.t && EBOOK.find(x=>t.by[x.k].d<t.by[x.k].t)===E;
     return `<details class="esec ${st.d===st.t?'full':''} ${inPlan?'':'out'}" data-k="${E.k}" ${firstOpen?'open':''}>
       <summary><h3>${esc(E.t)}</h3><span class="cnt">${st.d}/${st.t}</span><span class="meta">${esc(meta)}</span><span class="pbar"><i style="width:${Math.round(100*st.d/st.t)}%"></i></span></summary>
-      <ul class="chs">${chs.map(([title,pg],i)=>`<li><label class="chap" data-i="${i}">
-        <input type="checkbox" data-k="${E.k}" data-i="${i}" ${prog[chKey(E.k,i)]?'checked':''} ${readOnly?'disabled':''} aria-label="Li: ${esc(title)}">
-        <span class="tk" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg></span>
-        <span class="ct">${esc(title)}</span><span class="pg">págs. ${esc(pg)}</span></label></li>`).join('')}</ul>
+      <ul class="chs">${chs.map(([title,pg],i)=>{ const on=!!prog[chKey(E.k,i)]; return `<li class="chapli" data-k="${E.k}" data-i="${i}">
+        <div class="chap ${on?'rd':''}" data-i="${i}">
+          <label class="tkl"><input type="checkbox" data-k="${E.k}" data-i="${i}" ${on?'checked':''} ${readOnly?'disabled':''} aria-label="Li: ${esc(title)}">
+            <span class="tk" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg></span></label>
+          <button type="button" class="ctb" aria-expanded="false"><span class="ct">${esc(title)}</span><span class="pg">págs. ${esc(pg)}</span>
+            <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        </div>
+        <div class="ebtxt" hidden></div></li>`; }).join('')}</ul>
       ${readOnly?'':`<button type="button" class="link all" data-all="${E.k}">Marcar a seção toda como lida</button>`}
     </details>`;
   }).join('');
@@ -898,7 +922,9 @@ function renderEbook(p, readOnly){
       <div><h2>E-book C-PRO I</h2><p id="esum">${t.d} de ${t.t} capítulos lidos</p>
       <button type="button" class="btn" id="enext">${t.d===t.t?'Tudo lido! 🎉':'Continuar de onde parei'}</button></div></div>
     <div class="ebtools"><button type="button" class="chip" data-f="all" aria-pressed="true">Todos</button><button type="button" class="chip" data-f="todo" aria-pressed="false">Falta ler</button></div>
-    ${secHtml}`;
+    ${secHtml}
+    ${state.isAdmin?`<div class="ebadm"><strong>Administração do e-book</strong><br>Importa o texto dos capítulos (arquivo ebook-content.json) para o Firestore. Só o admin vê isto.<br>
+      <input type="file" id="ebfile" accept="application/json"> <button type="button" class="btn ghost" id="ebimp" style="padding:8px 14px;font-size:14px">Importar</button> <span id="ebst"></span></div>`:''}`;
   let filter='all';
   const refresh = () => {
     const pr = state.profiles[p]?.progress || {}; const tt = ebTotals(pr); const pc = Math.round(100*tt.d/tt.t);
@@ -910,7 +936,7 @@ function renderEbook(p, readOnly){
       sec.querySelector('.cnt').textContent=`${st.d}/${st.t}`;
       sec.querySelector('.pbar i').style.width=Math.round(100*st.d/st.t)+'%';
       sec.classList.toggle('full', st.d===st.t);
-      sec.querySelectorAll('.chap').forEach(l=>l.classList.toggle('hide', filter==='todo' && l.querySelector('input').checked));
+      sec.querySelectorAll('.chapli').forEach(l=>{ const on=l.querySelector('input').checked; l.classList.toggle('hide', filter==='todo' && on); l.querySelector('.chap').classList.toggle('rd', on); });
     });
   };
   const save = (k)=>{
@@ -924,8 +950,40 @@ function renderEbook(p, readOnly){
     save(k);
     if(inp.checked && ebTotals(pr).by[k].d===CHAPTERS[k].length) toast('Seção concluída: '+EBOOK.find(e=>e.k===k).t);
   }));
+  const ebCache = (state.ebCache ||= {});
+  async function loadChapter(k,i){
+    const id=`${k}-${i}`; if(ebCache[id]!==undefined) return ebCache[id];
+    try{ const snap=await getDoc(doc(fs,'ebook',id)); ebCache[id]= snap.exists() ? snap.data().html : null; }
+    catch(e){ console.error(e); return undefined; }
+    return ebCache[id];
+  }
+  app.querySelectorAll('.ctb').forEach(btn=>btn.addEventListener('click', async ()=>{
+    const li=btn.closest('.chapli'), box=li.querySelector('.ebtxt'), k=li.dataset.k, i=+li.dataset.i;
+    const open = btn.getAttribute('aria-expanded')==='true';
+    if(open){ btn.setAttribute('aria-expanded','false'); box.hidden=true; return; }
+    btn.setAttribute('aria-expanded','true'); box.hidden=false;
+    if(!box.dataset.ready){
+      box.innerHTML='<p class="msg">Carregando…</p>';
+      const html=await loadChapter(k,i);
+      if(html) box.innerHTML = html + (readOnly?'':'<button type="button" class="btn done">Terminei este capítulo ✓</button>');
+      else if(html===null) box.innerHTML='<p class="msg">O conteúdo deste capítulo ainda não foi importado. Avise o Vitor.</p>';
+      else { box.innerHTML='<p class="msg">Não deu pra carregar agora. Confira a internet e toque de novo.</p>'; box.dataset.ready=''; return; }
+      box.dataset.ready='1';
+    }
+    const d=box.querySelector('.done');
+    if(d) d.onclick=()=>{ const cb=li.querySelector('input'); if(!cb.checked){ cb.checked=true; cb.dispatchEvent(new Event('change')); } btn.click(); li.scrollIntoView({behavior:'smooth',block:'center'}); };
+  }));
   app.querySelectorAll('[data-all]').forEach(b=>b.onclick=()=>{ const k=b.dataset.all, pr=ensure().progress; CHAPTERS[k].forEach((_,i)=>pr[chKey(k,i)]=true);
     app.querySelectorAll(`.chap input[data-k="${k}"]`).forEach(x=>x.checked=true); save(k); toast('Seção marcada como lida'); });
+  const imp=app.querySelector('#ebimp');
+  if(imp) imp.onclick=async()=>{
+    const f=app.querySelector('#ebfile').files[0], st=app.querySelector('#ebst'); if(!f){ st.textContent='Escolha o arquivo.'; return; }
+    try{
+      const data=JSON.parse(await f.text()); const ids=Object.keys(data); let n=0;
+      for(let a=0;a<ids.length;a+=8){ const b=writeBatch(fs); ids.slice(a,a+8).forEach(id=>b.set(doc(fs,'ebook',id),{html:data[id],updatedAt:new Date().toISOString()})); await b.commit(); n+=Math.min(8,ids.length-a); st.textContent=`Importando… ${n}/${ids.length}`; }
+      state.ebCache={}; st.textContent=`Pronto: ${ids.length} capítulos importados.`; toast('Conteúdo importado');
+    }catch(e){ console.error(e); st.textContent='Falhou: '+(e.code||e.message); }
+  };
   app.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ filter=c.dataset.f; app.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',String(x===c))); refresh(); });
   app.querySelector('#enext').onclick=()=>{
     const pr=state.profiles[p]?.progress||{};

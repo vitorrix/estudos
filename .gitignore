@@ -1,3 +1,5 @@
 .DS_Store
 estudos.zip
 .firebase/
+# conteúdo do e-book (licenciado): nunca vai pro repositório público
+ebook-content.json

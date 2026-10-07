@@ -26,6 +26,12 @@ service cloud.firestore {
         || (logado() && email() in perfis() && perfis()[email()] == perfil);
     }
 
+    // texto do e-book (licenciado): só quem está liberado lê; só o admin grava
+    match /ebook/{cap} {
+      allow read: if membro();
+      allow write: if isAdmin();
+    }
+
     // qualquer outra coisa: fechado
     match /{document=**} {
       allow read, write: if false;
