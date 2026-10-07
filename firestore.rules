@@ -6,7 +6,7 @@ service cloud.firestore {
     function perfis() {
       return {
         'thaisilvacunha@gmail.com': 'thais',
-        'email-da-roberta@gmail.com': 'roberta'
+        'betaa.meneses@gmail.com': 'roberta'
       };
     }
     function admins() {
