@@ -152,6 +152,56 @@ h2{font-size:22px;margin:30px 0 10px;letter-spacing:-0.01em}
 .gbtn:focus-visible{outline:3px solid var(--dropout);outline-offset:2px}
 .gbtn svg{width:20px;height:20px}
 .who[hidden]{display:none}
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:20;display:inline-flex;align-items:center;gap:10px;border:0;background:var(--dropout);color:#fff;font-weight:700;font-size:15px;padding:13px 18px;border-radius:999px;cursor:pointer;box-shadow:0 6px 20px rgba(19,33,59,.28);transition:transform .15s}
+.fab:hover{transform:translateY(-2px)}
+.fab:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.fab svg{width:20px;height:20px;flex:none}
+.fab small{font-weight:600;opacity:.9;background:rgba(255,255,255,.22);padding:2px 8px;border-radius:99px;font-size:12px}
+.fab[hidden]{display:none}
+.wrap{padding-bottom:96px}
+.ebcard{display:flex;align-items:center;gap:16px;background:var(--sheet);border:1.5px solid var(--dropout);border-radius:8px;padding:14px 16px;margin-bottom:18px;cursor:pointer;width:100%;text-align:left;transition:transform .15s}
+.ebcard:hover{transform:translateY(-1px)}
+.ebcard:focus-visible{outline:3px solid var(--dropout);outline-offset:2px}
+.ebcard b{display:block;font-size:16px}.ebcard span{color:var(--muted);font-size:14px}
+.ebcard .go{margin-left:auto;font-weight:700;color:var(--dropout);white-space:nowrap}
+.ring{--v:0;width:56px;height:56px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--dropout) calc(var(--v)*1%),var(--dropout-soft) 0);transition:background .4s}
+.ring i{font-style:normal;width:44px;height:44px;border-radius:50%;background:var(--sheet);display:grid;place-items:center;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+.ebhero{display:flex;gap:18px;align-items:center;background:var(--sheet);border:1.5px solid var(--dropout);border-radius:8px;padding:18px;margin-bottom:16px}
+.ebhero .ring{width:84px;height:84px}.ebhero .ring i{width:68px;height:68px;font-size:18px}
+.ebhero h2{margin:0 0 4px;font-size:22px}.ebhero p{margin:0;color:var(--muted)}
+.ebhero .btn{margin-top:10px;padding:9px 16px;font-size:14px}
+.ebtools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.chip{border:1.5px solid var(--line);background:var(--sheet);border-radius:999px;padding:6px 14px;font-weight:600;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--fill);color:var(--paper);border-color:var(--fill)}
+.esec{background:var(--sheet);border:1px solid var(--line);border-radius:8px;margin-bottom:10px;overflow:hidden}
+.esec[open]{border-color:var(--dropout)}
+.esec summary{list-style:none;cursor:pointer;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center}
+.esec summary::-webkit-details-marker{display:none}
+.esec summary h3{margin:0;font-size:17px}
+.esec summary .cnt{font-variant-numeric:tabular-nums;font-weight:700;color:var(--dropout)}
+.esec summary .meta{grid-column:1/-1;color:var(--muted);font-size:13px}
+.esec .pbar{grid-column:1/-1;height:6px;background:var(--dropout-soft);border-radius:99px;overflow:hidden}
+.esec .pbar i{display:block;height:100%;width:0;background:var(--dropout);border-radius:99px;transition:width .35s ease}
+.esec.full summary h3::after{content:" ✓";color:var(--ok)}
+.esec.out{opacity:.7}
+.chs{list-style:none;margin:0;padding:4px 8px 10px}
+.chap{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:center;padding:11px 10px;border-radius:6px;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.chap:hover{background:var(--paper)}
+.chap input{position:absolute;opacity:0;width:1px;height:1px}
+.chap .tk{width:26px;height:26px;border:2px solid var(--dropout);border-radius:7px;display:grid;place-items:center;transition:background .15s,transform .15s}
+.chap .tk svg{width:16px;height:16px;stroke:#fff;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .25s ease .05s}
+.chap input:checked ~ .tk{background:var(--dropout);animation:pop .3s}
+.chap input:checked ~ .tk svg{stroke-dashoffset:0}
+.chap input:focus-visible ~ .tk{outline:3px solid var(--dropout);outline-offset:2px}
+.chap input:disabled ~ .tk{opacity:.5}
+.chap .ct{font-weight:500}
+.chap input:checked ~ .ct{color:var(--muted);text-decoration:line-through}
+.chap .pg{font-size:12px;font-weight:600;color:var(--muted);background:var(--paper);border-radius:99px;padding:2px 9px;white-space:nowrap}
+.chap.hide{display:none}
+.esec .all{margin:0 16px 10px;font-size:13px}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.22)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.chap .tk,.chap .tk svg,.esec .pbar i,.ring,.fab,.ebcard{transition:none;animation:none!important}}
+@media (max-width:480px){.ebhero{flex-direction:column;align-items:flex-start}.fab small{display:none}}
 </style>
 </head>
 <body>
@@ -170,6 +220,7 @@ h2{font-size:22px;margin:30px 0 10px;letter-spacing:-0.01em}
   </header>
   <main id="app"><div class="empty"><p>Carregando…</p></div></main>
 </div>
+<button class="fab" id="fab" type="button" hidden></button>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script type="module">
@@ -271,6 +322,17 @@ const EBOOK = [
   {k:'prev',    t:'Previdência complementar',             tp:'prev',     pages:[[98,107]],        anchors:['l-prev']},
   {k:'carteira',t:'Gestão de carteira e risco',           tp:'carteira', pages:[[108,133]],       anchors:['l-tit2']},
 ];
+const CHAPTERS = {
+  fundos:[['Regras de distribuição, documentos e cotas','2–3'],['Administração, gestão e taxas','3–5'],['Classes de fundos e tributação','5–7'],['ETFs e fundos incentivados','8'],['Fundos imobiliários (FII)','9–12'],['Clubes de investimento','13–14'],['Carteiras administradas','15']],
+  rf:[['Juros no Brasil, Copom e poupança','16–17'],['Preço de mercado e índices de renda fixa','18–19'],['Títulos públicos federais','20'],['Títulos bancários: CDB, LCI, LCA, LC, LF…','20–23'],['Debêntures e garantias','24–26'],['Rentabilidade líquida de um CDB','27']],
+  acoes:[['Tipos de ações, direitos e BDRs','28–29'],['Mercado primário, secundário e riscos','29–30'],['Eventos: subscrição, split, bonificação','31'],['Dividendos, JCP e tributação','32–33'],['IPO, follow-on e fechamento de capital','33–34'],['Quem participa da oferta: banco, custodiante, formador','35–37'],['Subscrição pública e tipos de garantia','38–40'],['Preço na emissão e Código ANBIMA de Ofertas','41–45'],['Bolsa, ordens de negociação e mercado a termo','45–48'],['Governança corporativa e segmentos da B3','49–51, 55–56'],['Índices de ações','51–54']],
+  deriv:[['Derivativos: futuro, swap e garantias','62–64'],['Produtos estruturados e COE','65–68'],['Opções europeias e americanas, precificação','69–70'],['Estratégias com opções e tributação','71–73']],
+  alt:[['Criptoativos','57–61'],['Private equity e venture capital','74–81'],['Crédito privado, FIDC e FIP','82–89'],['Investimentos no exterior: Treasuries, ADRs, índices','90–95'],['NDF e câmbio','96–97']],
+  prev:[['PGBL e VGBL','98–99'],['Regimes de tributação e tipos de renda','100–102'],['Rentabilidade, perfil e suitability','103–105'],['Planos corporativos','105–107']],
+  carteira:[['Cenário macro e indicadores','108–111'],['Monitoramento da carteira','112'],['Eventos de vida, portabilidade e resgate','113–117'],['Tributação e rebalanceamento','117–118'],['Risco e retorno, Markowitz','118–121'],['Correlação, beta e diversificação','121–124'],['Yield, duration e CAPM','125–127'],['Alfa, Sharpe, Sortino e Modigliani','128–132']],
+};
+const chKey = (k,i) => `ebc-${k}-${i}`;
+const ebTotals = prog => { let d=0,t=0; const by={}; for(const E of EBOOK){ const n=CHAPTERS[E.k].length; const x=CHAPTERS[E.k].filter((_,i)=>prog[chKey(E.k,i)]).length; by[E.k]={d:x,t:n}; d+=x; t+=n; } return {d,t,by}; };
 const pagesCount = r => r.reduce((n,[a,b])=>n+b-a+1,0);
 const pagesTxt = r => r.map(([a,b])=>a===b?`${a}`:`${a}–${b}`).join(' e ');
 const MIN_PAGINA = {nunca:3, javi:2, domino:1};
@@ -297,6 +359,7 @@ const state = {
   profiles: { thais:null, roberta:null },   // {answers, progress, savedAt}
   drafts: { thais:null, roberta:null },
   editing: { thais:false, roberta:false },
+  view: 'plan',
   user: null, mine: null, isAdmin: false, loaded: {thais:false, roberta:false},
 };
 const canEdit = p => state.isAdmin || state.mine===p;
@@ -442,8 +505,12 @@ function subscribe(){
   unsubs.forEach(u=>u()); unsubs=[];
   for(const p of Object.keys(PEOPLE)){
     unsubs.push(onSnapshot(doc(fs,'perfis',p), snap=>{
-      state.profiles[p] = snap.exists() ? snap.data() : null;
+      const next = snap.exists() ? snap.data() : null;
+      // no e-book o DOM já foi atualizado na hora do clique: não redesenha por eco do próprio salvamento
+      const same = state.view==='ebook' && state.loaded[p] && JSON.stringify(next?.progress||{})===JSON.stringify(state.profiles[p]?.progress||{});
+      state.profiles[p] = next;
       state.loaded[p] = true;
+      if(same) return;
       if(state.cur===p || state.cur==='cmp') render();
     }, err=>{ console.error(err); state.loaded[p]=true; render(); }));
   }
@@ -496,7 +563,7 @@ onAuthStateChanged(auth, u=>{
   const isAdmin = ADMINS.map(x=>x.toLowerCase()).includes(email);
   renderUserbar(u);
   if(!mine && !isAdmin){ state.user=null; return renderDenied(email); }
-  state.user=u; state.mine=mine; state.isAdmin=isAdmin;
+  state.user=u; state.mine=mine; state.isAdmin=isAdmin; state.view='plan';
   state.cur = mine || 'thais';
   document.getElementById('who').hidden=false;
   render(); subscribe();
@@ -783,6 +850,7 @@ function renderPlan(p, readOnly){
       <div class="bar"><i style="width:${pct}%"></i></div>
       <span style="font-size:14px">${status || (readOnly?'Ainda sem progresso marcado.':'Marque cada item quando terminar. O plano compara com o que estava previsto até hoje.')}</span>
     </div>
+    ${(()=>{ const t=ebTotals(prog); return `<button type="button" class="ebcard" id="ebcard"><div class="ring" style="--v:${Math.round(100*t.d/t.t)}"><i>${Math.round(100*t.d/t.t)}%</i></div><div><b>E-book C-PRO I</b><span>${t.d} de ${t.t} capítulos lidos</span></div><span class="go">Abrir →</span></button>`; })()}
     ${plan.focus.length?`<h2>Onde vai seu maior esforço</h2><div class="focus">${plan.focus.map(f=>`<span>${esc(f)}</span>`).join('')}</div>
       <p style="color:var(--muted);font-size:14px">Esses temas recebem o dobro do tempo de vídeo. Se depois da aula ainda parecerem confusos, reassista antes de seguir.</p>`:''}
     ${certTxt||trabTxt?`<p>${certTxt} ${trabTxt}</p>`:''}
@@ -803,10 +871,79 @@ function renderPlan(p, readOnly){
   app.querySelectorAll('[data-chk]').forEach(c=>c.addEventListener('change',()=>{
     const id=c.dataset.chk; prof.progress = prof.progress||{};
     if(c.checked) prof.progress[id]=true; else delete prof.progress[id];
+    if(id.startsWith('eb-')){ const k=id.slice(3); (CHAPTERS[k]||[]).forEach((_,i)=>{ if(c.checked) prof.progress[chKey(k,i)]=true; else delete prof.progress[chKey(k,i)]; }); }
     persist(p); render();
   }));
+  app.querySelector('#ebcard').onclick=()=>{ state.view='ebook'; render(); window.scrollTo({top:0}); };
   const ed=app.querySelector('#edit'); if(ed) ed.onclick=()=>{ state.editing[p]=true; render(); window.scrollTo({top:0}); };
   app.querySelector('#copy').onclick=()=>copyText(summaryText(p, plan));
+}
+
+function renderEbook(p, readOnly){
+  const ensure = () => { if(!state.profiles[p]) state.profiles[p]={progress:{},savedAt:new Date().toISOString()}; state.profiles[p].progress ||= {}; return state.profiles[p]; };
+  const prog = state.profiles[p]?.progress || {};
+  const a = state.profiles[p]?.answers;
+  const plan = a ? computePlan(a) : null;
+  const wkOf = plan ? weekGroups(plan).firstWeek : {};
+  const t = ebTotals(prog); const pct = Math.round(100*t.d/t.t);
+  const secHtml = EBOOK.map(E=>{
+    const chs = CHAPTERS[E.k]; const st=t.by[E.k];
+    const inPlan = plan ? plan.items.some(i=>i.id==='eb-'+E.k) : true;
+    const wk = wkOf['eb-'+E.k];
+    const meta = `Págs. ${pagesTxt(E.pages)}${plan ? (inPlan ? (wk?` · no plano: semana de ${fd(pd(wk))}`:'') : ' · fora do plano (módulo não escolhido)') : ''}`;
+    const firstOpen = st.d<st.t && EBOOK.find(x=>t.by[x.k].d<t.by[x.k].t)===E;
+    return `<details class="esec ${st.d===st.t?'full':''} ${inPlan?'':'out'}" data-k="${E.k}" ${firstOpen?'open':''}>
+      <summary><h3>${esc(E.t)}</h3><span class="cnt">${st.d}/${st.t}</span><span class="meta">${esc(meta)}</span><span class="pbar"><i style="width:${Math.round(100*st.d/st.t)}%"></i></span></summary>
+      <ul class="chs">${chs.map(([title,pg],i)=>`<li><label class="chap" data-i="${i}">
+        <input type="checkbox" data-k="${E.k}" data-i="${i}" ${prog[chKey(E.k,i)]?'checked':''} ${readOnly?'disabled':''} aria-label="Li: ${esc(title)}">
+        <span class="tk" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg></span>
+        <span class="ct">${esc(title)}</span><span class="pg">págs. ${esc(pg)}</span></label></li>`).join('')}</ul>
+      ${readOnly?'':`<button type="button" class="link all" data-all="${E.k}">Marcar a seção toda como lida</button>`}
+    </details>`;
+  }).join('');
+  app.innerHTML = `
+    ${readOnly?`<p class="ro">Você está vendo o e-book de ${PEOPLE[p]}. Só ela marca o que leu.</p>`:''}
+    <div class="ebhero"><div class="ring" id="ering" style="--v:${pct}"><i id="epct">${pct}%</i></div>
+      <div><h2>E-book C-PRO I</h2><p id="esum">${t.d} de ${t.t} capítulos lidos</p>
+      <button type="button" class="btn" id="enext">${t.d===t.t?'Tudo lido! 🎉':'Continuar de onde parei'}</button></div></div>
+    <div class="ebtools"><button type="button" class="chip" data-f="all" aria-pressed="true">Todos</button><button type="button" class="chip" data-f="todo" aria-pressed="false">Falta ler</button></div>
+    ${secHtml}`;
+  let filter='all';
+  const refresh = () => {
+    const pr = state.profiles[p]?.progress || {}; const tt = ebTotals(pr); const pc = Math.round(100*tt.d/tt.t);
+    app.querySelector('#ering').style.setProperty('--v',pc); app.querySelector('#epct').textContent=pc+'%';
+    app.querySelector('#esum').textContent=`${tt.d} de ${tt.t} capítulos lidos`;
+    app.querySelector('#enext').textContent = tt.d===tt.t ? 'Tudo lido! 🎉' : 'Continuar de onde parei';
+    app.querySelectorAll('.esec').forEach(sec=>{
+      const st=tt.by[sec.dataset.k];
+      sec.querySelector('.cnt').textContent=`${st.d}/${st.t}`;
+      sec.querySelector('.pbar i').style.width=Math.round(100*st.d/st.t)+'%';
+      sec.classList.toggle('full', st.d===st.t);
+      sec.querySelectorAll('.chap').forEach(l=>l.classList.toggle('hide', filter==='todo' && l.querySelector('input').checked));
+    });
+  };
+  const save = (k)=>{
+    const prof=ensure(); const pr=prof.progress; const all=CHAPTERS[k].every((_,i)=>pr[chKey(k,i)]);
+    if(all) pr['eb-'+k]=true; else delete pr['eb-'+k];
+    prof.savedAt=new Date().toISOString(); persist(p); refresh();
+  };
+  app.querySelectorAll('.chap input').forEach(inp=>inp.addEventListener('change',()=>{
+    const k=inp.dataset.k, i=+inp.dataset.i, pr=ensure().progress;
+    if(inp.checked) pr[chKey(k,i)]=true; else delete pr[chKey(k,i)];
+    save(k);
+    if(inp.checked && ebTotals(pr).by[k].d===CHAPTERS[k].length) toast('Seção concluída: '+EBOOK.find(e=>e.k===k).t);
+  }));
+  app.querySelectorAll('[data-all]').forEach(b=>b.onclick=()=>{ const k=b.dataset.all, pr=ensure().progress; CHAPTERS[k].forEach((_,i)=>pr[chKey(k,i)]=true);
+    app.querySelectorAll(`.chap input[data-k="${k}"]`).forEach(x=>x.checked=true); save(k); toast('Seção marcada como lida'); });
+  app.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ filter=c.dataset.f; app.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',String(x===c))); refresh(); });
+  app.querySelector('#enext').onclick=()=>{
+    const pr=state.profiles[p]?.progress||{};
+    for(const E of EBOOK){ const i=CHAPTERS[E.k].findIndex((_,j)=>!pr[chKey(E.k,j)]); if(i>=0){
+      const sec=app.querySelector(`.esec[data-k="${E.k}"]`); sec.open=true;
+      const row=sec.querySelector(`.chap[data-i="${i}"]`); row.scrollIntoView({behavior:'smooth',block:'center'});
+      row.animate([{background:'var(--dropout-soft)'},{background:'transparent'}],{duration:1600}); return; } }
+    toast('Você já leu tudo');
+  };
 }
 
 function summaryText(p, plan){
@@ -855,12 +992,24 @@ function renderCompare(){
     ${overlap.length? overlap.map(([wk,ts])=>`<div class="week" ><div style="padding:12px 16px"><strong>Semana de ${fd(pd(wk))}</strong><div style="color:var(--muted)">${ts.map(esc).join(', ')}</div></div></div>`).join('') : '<p>Os ritmos estão diferentes demais pra coincidir semana a semana. Dá pra combinar pelo menos os simulados de treino.</p>'}`;
 }
 
+const BOOK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5V5.5"/></svg>';
+function updateFab(){
+  const f=document.getElementById('fab'); if(!f) return;
+  if(!state.user || state.cur==='cmp'){ f.hidden=true; return; }
+  const ed = state.profiles[state.cur];
+  if(state.view==='ebook'){ f.innerHTML='← Voltar ao plano'; }
+  else { const t=ebTotals(ed?.progress||{}); f.innerHTML=`${BOOK_SVG}E-book <small>${t.d}/${t.t}</small>`; }
+  f.hidden=false;
+}
+document.getElementById('fab').onclick=()=>{ state.view = state.view==='ebook' ? 'plan' : 'ebook'; render(); window.scrollTo({top:0}); };
 function render(){
   if(!state.user) return;
   document.querySelectorAll('.who button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.p===state.cur)));
+  updateFab();
   if(state.cur==='cmp') return renderCompare();
   const p = state.cur;
   if(!state.loaded[p]){ app.innerHTML='<div class="empty"><p>Carregando…</p></div>'; return; }
+  if(state.view==='ebook') return renderEbook(p, !canEdit(p));
   const has = !!state.profiles[p]?.answers;
   if(!canEdit(p)){
     if(!has){ app.innerHTML=`<div class="empty"><p><strong>${PEOPLE[p]} ainda não respondeu o cartão inicial.</strong></p><p>O plano dela aparece aqui assim que ela responder.</p></div>`; return; }
