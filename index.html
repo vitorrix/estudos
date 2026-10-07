@@ -365,7 +365,7 @@ const state = {
 const canEdit = p => state.isAdmin || state.mine===p;
 
 function blankAnswers(){
-  return { certs:[], trab:'', ratings:{}, hp:'', hours:'', days:['1','2','3','4','6'], speed:'', examMode:'', examDate:'', blackouts:[], modules:ALL_MODS.slice(), start:todayS(), juntas:'' };
+  return { certs:[], trab:'', ratings:{}, hp:'', hours:'', days:['1','2','3','4','6'], speed:'', examMode:'', examDate:'', blackouts:[], modules:ALL_MODS.slice(), start:todayS() };
 }
 
 /* ---------- motor do plano ---------- */
@@ -565,7 +565,7 @@ onAuthStateChanged(auth, u=>{
   if(!mine && !isAdmin){ state.user=null; return renderDenied(email); }
   state.user=u; state.mine=mine; state.isAdmin=isAdmin; state.view='plan';
   state.cur = mine || 'thais';
-  document.getElementById('who').hidden=false;
+  document.getElementById('who').hidden=!isAdmin;   // só o admin alterna entre os planos; cada uma vê só o seu
   render(); subscribe();
 });
 
@@ -582,7 +582,6 @@ function renderForm(p){
   if(!state.drafts[p]) state.drafts[p] = JSON.parse(JSON.stringify(state.profiles[p]?.answers || blankAnswers()));
   const a = state.drafts[p];
   const name = PEOPLE[p];
-  const other = PEOPLE[p==='thais'?'roberta':'thais'];
   let q=0; const Q = () => `<div class="qn">${++q}</div>`;
   const on = topicsOn(a);
   app.innerHTML = `
@@ -675,13 +674,6 @@ function renderForm(p){
       <div class="inline" style="margin-top:0"><input type="date" name="start" value="${esc(a.start)}"></div>
     </div></div>
 
-    <div class="q">${Q()}<div class="qbody">
-      <p class="qt">Quer estudar algumas aulas junto com a ${other}?</p>
-      <div class="opts">
-        ${bub('juntas','sim','Sim, quando der',a.juntas==='sim')}
-        ${bub('juntas','nao','Prefiro sozinha',a.juntas==='nao')}
-      </div></div></div>
-
     <div class="actions">
       <button type="submit" class="btn">Gerar meu plano</button>
       ${state.profiles[p]?.answers ? `<button type="button" class="btn ghost" id="cancel">Voltar ao plano</button>`:''}
@@ -733,7 +725,6 @@ function renderForm(p){
     if((a.examMode==='marcada'||a.examMode==='mente') && !a.examDate) miss.push('data da prova');
     if((a.examMode==='marcada'||a.examMode==='mente') && a.examDate && a.examDate<=a.start) miss.push('data da prova depois do início');
     if(!a.start) miss.push('data de início');
-    if(!a.juntas) miss.push('estudar junto');
     if(a.blackouts.some(b=>(b.from&&!b.to)||(!b.from&&b.to))) miss.push('as duas datas de cada período sem estudo');
     a.blackouts = a.blackouts.filter(b=>b.from && b.to).map(b=> b.from>b.to ? {from:b.to,to:b.from} : b);
     if(miss.length){ f.querySelector('#err').textContent='Falta responder: '+miss.join(', ')+'.'; return; }
@@ -969,7 +960,6 @@ function renderCompare(){
   const plans = Object.fromEntries(ps.map(p=>[p, computePlan(state.profiles[p].answers)]));
   const later = ps.reduce((x,p)=> plans[p].verdict.date > plans[x].verdict.date ? p : x, ps[0]);
   const common = plans[later].verdict.date;
-  const juntas = ps.every(p=>state.profiles[p].answers.juntas==='sim');
   // overlap: aulas na mesma semana
   const g = Object.fromEntries(ps.map(p=>[p, weekGroups(plans[p])]));
   const overlap=[];
@@ -988,7 +978,7 @@ function renderCompare(){
       <div class="v-date">${fdl(common)}</div>
       <p>É a data de ${PEOPLE[later]}, que tem o plano mais longo. Quem terminar antes usa a sobra em simulado, que é o que mais faz diferença nessa prova.</p></section>
     <h2>Aulas que dá pra assistir juntas</h2>
-    ${!juntas?`<p style="color:var(--muted)">Pelo menos uma das duas prefere estudar sozinha. Fica a lista caso mudem de ideia.</p>`:`<p style="color:var(--muted)">Combinem horário: a conta é compartilhada e duas pessoas logadas ao mesmo tempo podem travar o acesso. Assistir junto resolve isso e ainda rende discussão.</p>`}
+    <p style="color:var(--muted)">Combinem horário: a conta é compartilhada e duas pessoas logadas ao mesmo tempo podem travar o acesso. Assistir junto resolve isso e ainda rende discussão.</p>
     ${overlap.length? overlap.map(([wk,ts])=>`<div class="week" ><div style="padding:12px 16px"><strong>Semana de ${fd(pd(wk))}</strong><div style="color:var(--muted)">${ts.map(esc).join(', ')}</div></div></div>`).join('') : '<p>Os ritmos estão diferentes demais pra coincidir semana a semana. Dá pra combinar pelo menos os simulados de treino.</p>'}`;
 }
 
