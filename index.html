@@ -66,6 +66,10 @@ h1{font-size:clamp(30px,6vw,46px);line-height:1.02;font-weight:800;letter-spacin
 .bub input:checked + .c{background:var(--fill);border-color:var(--fill);color:transparent}
 .bub input:focus-visible + .c{outline:3px solid var(--dropout);outline-offset:2px}
 .bub.sq .c{border-radius:4px}
+.opts.mods{flex-direction:column;align-items:stretch;gap:6px}
+.opts.mods .bub{align-items:flex-start;padding:10px 12px;border:1.5px solid var(--line);border-radius:6px}
+.opts.mods .bub .c{margin-top:2px}
+.opts.mods .bub small{font-size:13px;line-height:1.35}
 .grid{width:100%;border-collapse:collapse}
 .grid-wrap{overflow-x:auto}
 .grid th{font-size:13px;font-weight:600;color:var(--dropout);text-align:center;padding:0 6px 8px;white-space:nowrap}
@@ -248,6 +252,17 @@ const LESSONS = [
   {id:'l-tit1', t:'Análise de Título I', c:'Laíra', v:T('10:54'), tp:'carteira'},
   {id:'l-tit2', t:'Análise de Título II', c:'Laíra', v:T('29:40'), tp:'carteira'},
 ];
+const MODULES = [
+  ['Maluf','Maluf','Base: cálculo e HP12C, macroeconomia, renda fixa, tributação, ações e derivativos'],
+  ['Laíra','Laíra','Produtos: fundos, renda variável, ofertas, alternativos, previdência e gestão de carteira'],
+  ['ebook','E-book de ética','Ética, regulação, suitability e prevenção à lavagem (não tem aula em vídeo)'],
+  ['sim','Simulados','Diagnóstico, simulados de treino e reta final com revisão dos erros'],
+];
+const ALL_MODS = MODULES.map(m=>m[0]);
+const mods = a => Array.isArray(a.modules) ? a.modules : ALL_MODS;
+const lessonOn = (L,a) => L.kind==='ebook' ? mods(a).includes('ebook') : (L.c==='Maluf'||L.c==='Laíra') ? mods(a).includes(L.c) : true;
+const topicsOn = a => { const t=new Set(); LESSONS.forEach(L=>{ if(lessonOn(L,a)){ if(L.tp) t.add(L.tp); if(L.kind==='ebook') t.add('etica'); } }); return t; };
+const modVideo = k => LESSONS.filter(L=>L.c===k).reduce((s,L)=>s+L.v,0);
 const FACTOR = {nunca:2.0, javi:1.5, domino:1.0};
 const PEOPLE = {thais:'Thaís', roberta:'Roberta'};
 const DAYS = [['1','Seg'],['2','Ter'],['3','Qua'],['4','Qui'],['5','Sex'],['6','Sáb'],['0','Dom']];
@@ -276,7 +291,7 @@ const state = {
 const canEdit = p => state.isAdmin || state.mine===p;
 
 function blankAnswers(){
-  return { certs:[], trab:'', ratings:{}, hp:'', hours:'', days:['1','2','3','4','6'], speed:'', examMode:'', examDate:'', blackouts:[], start:todayS(), juntas:'' };
+  return { certs:[], trab:'', ratings:{}, hp:'', hours:'', days:['1','2','3','4','6'], speed:'', examMode:'', examDate:'', blackouts:[], modules:ALL_MODS.slice(), start:todayS(), juntas:'' };
 }
 
 /* ---------- motor do plano ---------- */
@@ -285,7 +300,9 @@ function buildItems(a){
   const f = tp => tp ? FACTOR[a.ratings[tp]||'javi'] : 1;
   const items = [];
   const etf = FACTOR[a.ratings.etica||'javi'];
+  const useSim = mods(a).includes('sim');
   for(const L of LESSONS){
+    if(!lessonOn(L,a)) continue;
     if(L.kind==='ebook'){
       items.push({id:'ebook', t:'E-book: ética, regulação, suitability e prevenção à lavagem', c:'E-book', h: etf===2?6:etf===1.5?3.5:1.5, kind:'ebook',
         note:'Não há aula em vídeo desse tema. Leia com calma e anote as regras.'});
@@ -296,7 +313,7 @@ function buildItems(a){
     if(L.id==='m-calc2' && (a.ratings.mat==='nunca' || a.hp==='nao')){
       items.push({id:'hp-pratica', t: a.hp==='nao' ? 'Instalar um emulador de HP12C e refazer os exemplos das aulas' : 'Prática na HP12C: refazer os exemplos das aulas', c:'Prática', h:1.5, kind:'pratica'});
     }
-    if(L.id==='pp2'){
+    if(L.id==='pp2' && useSim){
       items.push({id:'sim-diag', t:'Simulado diagnóstico', c:'Simulados', h:1.5, kind:'sim',
         note:'Não é pra medir nota. É pra ver o formato da prova antes de estudar e testar o login da plataforma de simulados.'});
     }
@@ -310,11 +327,15 @@ function buildItems(a){
     acc += it.h;
     if(acc>=8){ out.push({id:'sim-m'+n, t:`Simulado de treino ${n} + revisão dos erros`, c:'Simulados', h:2, kind:'sim'}); n++; acc=0; }
   }
+  if(!useSim){
+    if(mods(a).includes('ebook')) out.push({id:'rev-etica', t:'Revisão final de ética e regulação', c:'Reta final', h:1, kind:'ebook'});
+    return out;
+  }
   const content = items.reduce((s,i)=>s+i.h,0);
   const finalH = Math.max(8, Math.round(content*0.25));
   const nf = Math.ceil(finalH/2.5);
   for(let k=1;k<=nf;k++) out.push({id:'sim-f'+k, t:`Simulado completo ${k} + revisão dos erros`, c:'Reta final', h:2.5, kind:'sim'});
-  out.push({id:'rev-etica', t:'Revisão final de ética e regulação', c:'Reta final', h:1, kind:'ebook'});
+  if(mods(a).includes('ebook')) out.push({id:'rev-etica', t:'Revisão final de ética e regulação', c:'Reta final', h:1, kind:'ebook'});
   out.push({id:'rev-vespera', t:'Véspera: revisão leve da lista de erros e descanso', c:'Reta final', h:1, kind:'sim'});
   return out;
 }
@@ -379,7 +400,8 @@ function computePlan(a){
       txt:`É quando o plano termina com ${a.hours}h por semana, já com a reta final de simulados. Agende com antecedência, vaga no fim do ano some rápido.`};
   }
   // focos
-  const focus = TOPICS.filter(([k])=>a.ratings[k]==='nunca').map(([,l])=>l);
+  const on = topicsOn(a);
+  const focus = TOPICS.filter(([k])=>on.has(k) && a.ratings[k]==='nunca').map(([,l])=>l);
   return {items, total, video, sch, rec, verdict, focus};
 }
 
@@ -479,9 +501,17 @@ function renderForm(p){
   const name = PEOPLE[p];
   const other = PEOPLE[p==='thais'?'roberta':'thais'];
   let q=0; const Q = () => `<div class="qn">${++q}</div>`;
+  const on = topicsOn(a);
   app.innerHTML = `
   <form class="sheet" id="f" novalidate>
     <div class="sheet-head"><span>Cartão inicial</span><strong>${name}</strong></div>
+
+    <div class="q">${Q()}<div class="qbody">
+      <p class="qt">Quais módulos do curso você vai fazer?</p>
+      <p class="qh">Marque só o que entra no seu estudo. O plano e as próximas perguntas se ajustam a isso.</p>
+      <div class="opts mods">
+        ${MODULES.map(([k,l,d])=>bub('modules',k,`<strong>${l}</strong><br><small style="color:var(--muted)">${d}${(k==='Maluf'||k==='Laíra')?` · ${fv(modVideo(k))} de vídeo`:''}</small>`,mods(a).includes(k),'checkbox')).join('')}
+      </div></div></div>
 
     <div class="q">${Q()}<div class="qbody">
       <p class="qt">Quais certificações ANBIMA você já tem?</p>
@@ -501,24 +531,24 @@ function renderForm(p){
         ${bub('trab','nao','Não',a.trab==='nao')}
       </div></div></div>
 
-    <div class="q">${Q()}<div class="qbody">
+    ${on.size?`<div class="q">${Q()}<div class="qbody">
       <p class="qt">Quanto você já sabe de cada tema?</p>
       <p class="qh">Seja honesta: o tempo de estudo de cada aula sai daqui. Na dúvida entre duas, marque a de menos domínio.</p>
       <div class="grid-wrap"><table class="grid">
         <thead><tr><th>Tema</th><th>Nunca vi</th><th>Já vi</th><th>Domino</th></tr></thead>
-        <tbody>${TOPICS.map(([k,l])=>`<tr data-tp="${k}"><td>${l}</td>
+        <tbody>${TOPICS.filter(([k])=>on.has(k)).map(([k,l])=>`<tr data-tp="${k}"><td>${l}</td>
           <td>${bub('r_'+k,'nunca','<span class="sr">Nunca vi</span>',a.ratings[k]==='nunca')}</td>
           <td>${bub('r_'+k,'javi','<span class="sr">Já vi</span>',a.ratings[k]==='javi')}</td>
           <td>${bub('r_'+k,'domino','<span class="sr">Domino</span>',a.ratings[k]==='domino')}</td></tr>`).join('')}</tbody>
-      </table></div></div></div>
+      </table></div></div></div>`:''}
 
-    <div class="q">${Q()}<div class="qbody">
+    ${on.has('mat')?`<div class="q">${Q()}<div class="qbody">
       <p class="qt">Você tem uma HP12C?</p>
       <div class="opts">
         ${bub('hp','fisica','Sim, a calculadora',a.hp==='fisica')}
         ${bub('hp','app','Uso app no celular',a.hp==='app')}
         ${bub('hp','nao','Não tenho',a.hp==='nao')}
-      </div></div></div>
+      </div></div></div>`:''}
 
     <div class="q">${Q()}<div class="qbody">
       <p class="qt">Quantas horas por semana você estuda de verdade?</p>
@@ -581,6 +611,10 @@ function renderForm(p){
   const f = app.querySelector('#f');
   f.addEventListener('change', e=>{
     const t=e.target, n=t.name;
+    if(n==='modules'){
+      a.modules=[...f.querySelectorAll('input[name=modules]:checked')].map(x=>x.value);
+      const y=window.scrollY; renderForm(p); window.scrollTo(0,y); return;
+    }
     if(n==='certs'){
       const vals=[...f.querySelectorAll('input[name=certs]:checked')].map(x=>x.value);
       if(t.value==='nenhuma' && t.checked){ f.querySelectorAll('input[name=certs]').forEach(x=>{ if(x.value!=='nenhuma') x.checked=false; }); a.certs=['nenhuma']; }
@@ -601,12 +635,14 @@ function renderForm(p){
   f.addEventListener('submit', e=>{
     e.preventDefault();
     const miss=[];
+    if(!mods(a).length) miss.push('módulos');
     if(!a.certs.length) miss.push('certificações');
     if(!a.trab) miss.push('trabalho');
-    const mr = TOPICS.filter(([k])=>!a.ratings[k]);
+    const onT = topicsOn(a);
+    const mr = TOPICS.filter(([k])=>onT.has(k) && !a.ratings[k]);
     f.querySelectorAll('tr[data-tp]').forEach(tr=>tr.classList.toggle('miss', !a.ratings[tr.dataset.tp]));
     if(mr.length) miss.push(`${mr.length} tema(s) da tabela`);
-    if(!a.hp) miss.push('HP12C');
+    if(onT.has('mat') && !a.hp) miss.push('HP12C');
     if(!a.hours) miss.push('horas por semana');
     if(!a.days.length) miss.push('dias de estudo');
     if(!a.speed) miss.push('velocidade');
@@ -710,13 +746,13 @@ function renderPlan(p, readOnly){
     ${certTxt||trabTxt?`<p>${certTxt} ${trabTxt}</p>`:''}
     <h2>Cronograma semana a semana</h2>
     ${weekHtml}
-    <h2>Regras dos simulados</h2>
+    ${mods(a).includes('sim')||mods(a).includes('ebook')?`<h2>${mods(a).includes('sim')?'Regras dos simulados':'Sobre o e-book'}</h2>
     <div class="rules">
-      <p>Faça o diagnóstico logo no começo, antes de estudar. Ele serve pra conhecer o formato da prova nova, com diálogo de cliente e árvore de decisão, e pra confirmar que o login da plataforma de simulados funciona.</p>
+      ${mods(a).includes('sim')?`<p>Faça o diagnóstico logo no começo, antes de estudar. Ele serve pra conhecer o formato da prova nova, com diálogo de cliente e árvore de decisão, e pra confirmar que o login da plataforma de simulados funciona.</p>
       <p>Toda questão errada vai pra uma lista com o tema ao lado. No fim de cada semana, revise a lista inteira, não só os erros novos.</p>
-      <p>O banco de questões repete bastante. Nota alta depois de vários simulados pode ser só memória. O sinal confiável é acertar questão que você nunca viu.</p>
-      <p>Não há aula em vídeo de ética, regulação e suitability. Essa parte vem do e-book e dos simulados, e não deve ficar pra última semana.</p>
-    </div>
+      <p>O banco de questões repete bastante. Nota alta depois de vários simulados pode ser só memória. O sinal confiável é acertar questão que você nunca viu.</p>`:''}
+      ${mods(a).includes('ebook')?`<p>Não há aula em vídeo de ética, regulação e suitability. Essa parte vem do e-book${mods(a).includes('sim')?' e dos simulados':''}, e não deve ficar pra última semana.</p>`:''}
+    </div>`:''}
     <p style="color:var(--muted);font-size:14px;margin-top:18px">Como o tempo é calculado: cada hora de vídeo, na velocidade escolhida, vira ~2h de estudo em tema que você nunca viu, ~1h30 no que já viu e ~1h no que domina. Feriados não estão descontados; use como dia extra.</p>
     <div class="toolbar">
       ${readOnly?'':'<button class="btn ghost" id="edit">Refazer o cartão inicial</button>'}
