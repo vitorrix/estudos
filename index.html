@@ -290,16 +290,16 @@ const TOPIC_LABEL = Object.fromEntries(TOPICS);
 const LESSONS = [
   {id:'pp1', t:'Cronograma de estudos', c:'Ponto de Partida', v:T('1:17'), tp:null},
   {id:'pp2', t:'Migração das certificações', c:'Ponto de Partida', v:T('1:31'), tp:null},
-  {id:'m-calc1', t:'Cálculo I', c:'Maluf', v:T('9:11'), tp:'mat'},
-  {id:'m-calc2', t:'Cálculo II', c:'Maluf', v:T('5:55'), tp:'mat'},
-  {id:'m-macro', t:'Macroeconomia', c:'Maluf', v:T('1:03:08'), tp:'macro'},
-  {id:'m-macroex', t:'Exercícios de macroeconomia', c:'Maluf', v:T('33:10'), tp:'macro'},
-  {id:'m-rf', t:'Renda Fixa', c:'Maluf', v:T('53:16'), tp:'rf'},
-  {id:'m-lci', t:'Renda Fixa: LCI, LCA, CRI e CRA', c:'Maluf', v:T('45:36'), tp:'rf'},
-  {id:'m-trib', t:'Tributação', c:'Maluf', v:T('12:29'), tp:'trib'},
-  {id:'m-acoes1', t:'Ações parte I', c:'Maluf', v:T('36:18'), tp:'acoes'},
-  {id:'m-acoes2', t:'Ações parte II', c:'Maluf', v:T('26:18'), tp:'acoes'},
-  {id:'m-deriv', t:'Derivativos', c:'Maluf', v:T('45:31'), tp:'deriv'},
+  {id:'m-calc1', t:'Cálculo I', f:'Introdução ao Cálculo', c:'Maluf', v:T('9:11'), tp:'mat'},
+  {id:'m-calc2', t:'Cálculo II', f:'Introdução ao Cálculo', c:'Maluf', v:T('5:55'), tp:'mat'},
+  {id:'m-macro', t:'Macroeconomia', f:'Macroeconomia', c:'Maluf', v:T('1:03:08'), tp:'macro'},
+  {id:'m-macroex', t:'Exercícios Macroeconomia', f:'Macroeconomia', c:'Maluf', v:T('33:10'), tp:'macro'},
+  {id:'m-rf', t:'Renda Fixa', f:'Renda Fixa', c:'Maluf', v:T('53:16'), tp:'rf'},
+  {id:'m-lci', t:'Renda Fixa - LCI LCA CRI/CRA', f:'Renda Fixa', c:'Maluf', v:T('45:36'), tp:'rf'},
+  {id:'m-trib', t:'Tributação', f:'Renda Fixa', c:'Maluf', v:T('12:29'), tp:'trib'},
+  {id:'m-acoes1', t:'Ações parte I', f:'Ações', c:'Maluf', v:T('36:18'), tp:'acoes'},
+  {id:'m-acoes2', t:'Ações parte II', f:'Ações', c:'Maluf', v:T('26:18'), tp:'acoes'},
+  {id:'m-deriv', t:'Derivativos', f:'Derivativos', c:'Maluf', v:T('45:31'), tp:'deriv'},
   {id:'l-opcoes', t:'Tipos de opções', c:'Laíra', v:T('29:41'), tp:'deriv'},
   {id:'l-fundos1', t:'Fundos I', c:'Laíra', v:T('28:13'), tp:'fundos'},
   {id:'l-fundos2', t:'Fundos II', c:'Laíra', v:T('1:20:53'), tp:'fundos'},
@@ -405,7 +405,7 @@ function buildItems(a){
   for(const L of LESSONS){
     if(!lessonOn(L,a)) continue;
     const h = (L.v/3600)/sp * f(L.tp);
-    items.push({id:L.id, t:L.t, c:L.c, v:L.v, h: Math.max(h, L.tp? 0.15 : 0.05), kind:'aula', tp:L.tp});
+    items.push({id:L.id, t:L.t, c:L.c, f:L.f, v:L.v, h: Math.max(h, L.tp? 0.15 : 0.05), kind:'aula', tp:L.tp});
     if(L.id==='m-calc2' && (a.ratings.mat==='nunca' || a.hp==='nao')){
       items.push({id:'hp-pratica', t: a.hp==='nao' ? 'Instalar um emulador de HP12C e refazer os exemplos das aulas' : 'Prática na HP12C: refazer os exemplos das aulas', c:'Prática', h:1.5, kind:'pratica'});
     }
@@ -830,7 +830,7 @@ function renderPlan(p, readOnly){
         : `<span style="opacity:.35">${bub('x_'+id, id, '', false, 'checkbox', 'disabled')}</span>`;
       return `<li class="${prog[id]?'done':''}">
         ${box}
-        <div class="it"><span class="${tagc}">${esc(it.c)}</span>${esc(it.t)}${cont}${it.note&&nth===1?`<em>${esc(it.note)}</em>`:''}${split&&!last?`<em>Continua na próxima semana, de onde parou: ${fclock(seg.to)}.</em>`:''}</div>
+        <div class="it"><span class="${tagc}">${esc(it.f?`${it.c} › ${it.f}`:it.c)}</span>${esc(it.t)}${cont}${it.note&&nth===1?`<em>${esc(it.note)}</em>`:''}${split&&!last?`<em>Continua na próxima semana, de onde parou: ${fclock(seg.to)}.</em>`:''}</div>
         <div class="dur">${dur}</div></li>`;
     }).join('') : '';
     return `<details class="week ${wk===curWk?'now':''}" ${open?'open':''}>
