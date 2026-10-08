@@ -429,12 +429,12 @@ function buildItems(a){
     if(it.id==='sim-diag'){ started=true; continue; }
     if(!started) continue;
     acc += it.h;
-    if(acc>=8){ out.push({id:'sim-m'+n, t:`Simulado de treino ${n} (40 questões, 2h30) + revisão dos erros`, c:'Simulados', h:3, kind:'sim'}); n++; acc=0; }
+    if(acc>=8){ out.push({id:'sim-m'+n, t:`Simulado de treino ${n} (40 questões) + revisão dos erros, 2h30 no total`, c:'Simulados', h:2.5, kind:'sim'}); n++; acc=0; }
   }
   const content = items.reduce((s,i)=>s+i.h,0);
   const finalH = Math.max(8, Math.round(content*0.25));
-  const nf = Math.ceil(finalH/3);
-  for(let k=1;k<=nf;k++) out.push({id:'sim-f'+k, t:`Simulado completo ${k} (40 questões, 2h30) + revisão dos erros`, c:'Reta final', h:3, kind:'sim'});
+  const nf = Math.ceil(finalH/2.5);
+  for(let k=1;k<=nf;k++) out.push({id:'sim-f'+k, t:`Simulado completo ${k} (40 questões) + revisão dos erros, 2h30 no total`, c:'Reta final', h:2.5, kind:'sim'});
   out.push({id:'rev-vespera', t:'Véspera: revisão leve da lista de erros e descanso', c:'Reta final', h:1, kind:'sim'});
   return out;
 }
