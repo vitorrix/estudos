@@ -322,7 +322,7 @@ const LESSONS = [
 const MODULES = [
   ['Maluf','C-PRO I · Professor Marcos Maluf','10 aulas: Macroeconomia, Renda Fixa, Ações, Derivativos e Introdução ao Cálculo'],
   ['Laíra','C-PRO I · Professora Laíra Aragão','20 aulas: Produtos de Investimentos, Investimentos Alternativos, Previdência Complementar e Gestão de Risco'],
-  ['sim','Simulados','O Simulado C-Pro I Dinâmico (40 questões, 2h30). Você escolhe quantos fazer e quando'],
+  ['sim','Simulados','O Simulado C-Pro I Dinâmico: 40 questões, 2h30, aprovação com 28 acertos (70%). Você escolhe quantos fazer e quando'],
 ];
 const ALL_MODS = MODULES.map(m=>m[0]);
 const mods = a => Array.isArray(a.modules) ? a.modules.filter(m=>ALL_MODS.includes(m)) : ALL_MODS;
@@ -397,7 +397,7 @@ function buildItems(a){
   // simulados: só os que ela escolheu, espalhados ao longo do estudo ou todos no fim
   const n = mods(a).includes('sim') ? Math.max(0, Number(a.simN)||0) : 0;
   const mk = k => ({id:'sim-'+k, t:`Simulado C-Pro I Dinâmico (${k} de ${n})`, c:'Simulados', h:2.5, kind:'sim',
-    note:'40 questões, limite de 2h30, prova mais revisão dos erros. O simulado gera questões novas a cada vez.'});
+    note:'40 questões em até 2h30; aprovação com 28 acertos (70%). Faça a prova e use o resto do tempo para revisar os erros. O simulado gera questões novas a cada vez.'});
   const content = items.reduce((x,i)=>x+i.h,0);
   const out=[]; let acc=0, k=0;
   for(const it of items){
@@ -588,7 +588,7 @@ function renderForm(p){
 
     ${mods(a).includes('sim')?`<div class="q">${Q()}<div class="qbody">
       <p class="qt">Quantos simulados você quer fazer?</p>
-      <p class="qh">O portal tem um só, o Simulado C-Pro I Dinâmico (40 questões, 2h30), que gera questões novas a cada vez. Cada um ocupa 2h30 no plano, com a revisão dos erros.</p>
+      <p class="qh">O portal tem um só, o Simulado C-Pro I Dinâmico (40 questões, 2h30, aprovação com 28 acertos), que gera questões novas a cada vez. Cada um ocupa 2h30 no plano, com a revisão dos erros.</p>
       <div class="opts">${[1,2,3,4,5,6].map(n=>bub('simN',n,String(n),String(a.simN)===String(n))).join('')}</div>
       <p class="qt" style="margin-top:14px">Quando fazer?</p>
       <div class="opts">
@@ -843,7 +843,7 @@ function renderPlan(p, readOnly){
     ${weekHtml}
     ${mods(a).includes('sim')?`<h2>Sobre os simulados</h2>
     <div class="rules">
-      <p>O simulado dinâmico gera 40 questões aleatórias, com limite de 2h30 e o progresso salvo sozinho: reserve o tempo todo e uma conexão estável. Seus resultados e o detalhe de cada simulado ficam em <a href="${SIM_RES}" target="_blank" rel="noopener">Meus resultados ↗</a>.</p>
+      <p>O simulado dinâmico gera 40 questões aleatórias, com limite de 2h30 e o progresso salvo sozinho. A aprovação na prova exige <strong>28 acertos de 40 (70%)</strong>, então use esse número como meta: reserve o tempo todo e uma conexão estável. Seus resultados e o detalhe de cada simulado ficam em <a href="${SIM_RES}" target="_blank" rel="noopener">Meus resultados ↗</a>.</p>
       <p>Toda questão errada vai pra uma lista com o tema ao lado. No fim de cada semana, revise a lista inteira, não só os erros novos.</p>
       <p>O banco de questões repete bastante. Nota alta depois de vários simulados pode ser só memória. O sinal confiável é acertar questão que você nunca viu.</p>
     </div>`:''}
