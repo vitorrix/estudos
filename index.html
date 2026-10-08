@@ -356,6 +356,8 @@ const ebTotals = prog => { let d=0,t=0; const by={}; for(const E of EBOOK){ cons
 const pagesCount = r => r.reduce((n,[a,b])=>n+b-a+1,0);
 const pagesTxt = r => r.map(([a,b])=>a===b?`${a}`:`${a}–${b}`).join(' e ');
 const MIN_PAGINA = {nunca:3, javi:2, domino:1};
+const SIM_URL = 'https://simulados.omarcosmaluf.com/simulados/dinamico/cproi';
+const SIM_RES = 'https://simulados.omarcosmaluf.com/simulados/resultados?evaluation_type=dynamic_cproi';
 const FACTOR = {nunca:2.0, javi:1.5, domino:1.0};
 const PEOPLE = {thais:'Thaís', roberta:'Roberta'};
 const DAYS = [['1','Seg'],['2','Ter'],['3','Qua'],['4','Qui'],['5','Sex'],['6','Sáb'],['0','Dom']];
@@ -415,7 +417,7 @@ function buildItems(a){
         pages:E.pages, note:`Págs. ${pagesTxt(E.pages)} do e-book (${n} páginas). Leia depois da aula e refaça os exemplos de cálculo.`});
     }
     if(L.id==='pp2' && useSim){
-      items.push({id:'sim-diag', t:'Simulado diagnóstico', c:'Simulados', h:1.5, kind:'sim',
+      items.push({id:'sim-diag', t:'Simulado diagnóstico (40 questões, até 2h30)', c:'Simulados', h:2.5, kind:'sim',
         note:'Não é pra medir nota. É pra ver o formato da prova antes de estudar e testar o login da plataforma de simulados.'});
     }
   }
@@ -427,12 +429,12 @@ function buildItems(a){
     if(it.id==='sim-diag'){ started=true; continue; }
     if(!started) continue;
     acc += it.h;
-    if(acc>=8){ out.push({id:'sim-m'+n, t:`Simulado de treino ${n} + revisão dos erros`, c:'Simulados', h:2, kind:'sim'}); n++; acc=0; }
+    if(acc>=8){ out.push({id:'sim-m'+n, t:`Simulado de treino ${n} (40 questões, 2h30) + revisão dos erros`, c:'Simulados', h:3, kind:'sim'}); n++; acc=0; }
   }
   const content = items.reduce((s,i)=>s+i.h,0);
   const finalH = Math.max(8, Math.round(content*0.25));
-  const nf = Math.ceil(finalH/2.5);
-  for(let k=1;k<=nf;k++) out.push({id:'sim-f'+k, t:`Simulado completo ${k} + revisão dos erros`, c:'Reta final', h:2.5, kind:'sim'});
+  const nf = Math.ceil(finalH/3);
+  for(let k=1;k<=nf;k++) out.push({id:'sim-f'+k, t:`Simulado completo ${k} (40 questões, 2h30) + revisão dos erros`, c:'Reta final', h:3, kind:'sim'});
   out.push({id:'rev-vespera', t:'Véspera: revisão leve da lista de erros e descanso', c:'Reta final', h:1, kind:'sim'});
   return out;
 }
@@ -830,7 +832,7 @@ function renderPlan(p, readOnly){
         : `<span style="opacity:.35">${bub('x_'+id, id, '', false, 'checkbox', 'disabled')}</span>`;
       return `<li class="${prog[id]?'done':''}">
         ${box}
-        <div class="it"><span class="${tagc}">${esc(it.f?`${it.c} › ${it.f}`:it.c)}</span>${esc(it.t)}${cont}${it.note&&nth===1?`<em>${esc(it.note)}</em>`:''}${split&&!last?`<em>Continua na próxima semana, de onde parou: ${fclock(seg.to)}.</em>`:''}</div>
+        <div class="it"><span class="${tagc}">${esc(it.f?`${it.c} › ${it.f}`:it.c)}</span>${esc(it.t)}${cont}${it.note&&nth===1?`<em>${esc(it.note)}</em>`:''}${it.id.startsWith('sim-')&&it.id!=='sim-vespera'&&it.id!=='rev-vespera'?`<em><a href="${SIM_URL}" target="_blank" rel="noopener">Abrir o simulado dinâmico ↗</a></em>`:''}${split&&!last?`<em>Continua na próxima semana, de onde parou: ${fclock(seg.to)}.</em>`:''}</div>
         <div class="dur">${dur}</div></li>`;
     }).join('') : '';
     return `<details class="week ${wk===curWk?'now':''}" ${open?'open':''}>
@@ -870,7 +872,8 @@ function renderPlan(p, readOnly){
     <h2>Como usar o e-book</h2>
     <div class="rules">
       <p>O e-book resume o curso inteiro. Cada seção entra no cronograma logo depois da aula do mesmo tema: assista, depois leia a seção, anotando o que errar nos exemplos.</p>
-      ${mods(a).includes('sim')?`<p>Faça o diagnóstico logo no começo, antes de estudar. Ele serve pra conhecer o formato da prova nova, com diálogo de cliente e árvore de decisão, e pra confirmar que o login da plataforma de simulados funciona.</p>
+      ${mods(a).includes('sim')?`<p>Faça o diagnóstico logo no começo, antes de estudar. O simulado dinâmico gera 40 questões aleatórias, com limite de 2h30 e o progresso salvo sozinho: reserve o tempo todo e uma conexão estável. Ele serve pra conhecer o formato da prova nova, com diálogo de cliente e árvore de decisão, e pra confirmar que o login da plataforma de simulados funciona.</p>
+      <p>Seus resultados e o detalhe de cada simulado ficam em <a href="${SIM_RES}" target="_blank" rel="noopener">Meus resultados ↗</a>.</p>
       <p>Toda questão errada vai pra uma lista com o tema ao lado. No fim de cada semana, revise a lista inteira, não só os erros novos.</p>
       <p>O banco de questões repete bastante. Nota alta depois de vários simulados pode ser só memória. O sinal confiável é acertar questão que você nunca viu.</p>`:''}
     </div>
