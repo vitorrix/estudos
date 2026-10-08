@@ -286,21 +286,18 @@ const TOPICS = [
   ['carteira','Gestão de carteira e risco'],
 ];
 const TOPIC_LABEL = Object.fromEntries(TOPICS);
-// ordem pedagógica: base do Maluf primeiro, produtos da Laíra, carteira por último
+// exatamente as lições do portal do curso, na ordem dele: módulo > menu > vídeo
 const LESSONS = [
-  {id:'pp1', t:'Cronograma de estudos', c:'Ponto de Partida', v:T('1:17'), tp:null},
-  {id:'pp2', t:'Migração das certificações', c:'Ponto de Partida', v:T('1:31'), tp:null},
-  {id:'m-calc1', t:'Cálculo I', f:'Introdução ao Cálculo', c:'Maluf', v:T('9:11'), tp:'mat'},
-  {id:'m-calc2', t:'Cálculo II', f:'Introdução ao Cálculo', c:'Maluf', v:T('5:55'), tp:'mat'},
   {id:'m-macro', t:'Macroeconomia', f:'Macroeconomia', c:'Maluf', v:T('1:03:08'), tp:'macro'},
-  {id:'m-macroex', t:'Exercícios Macroeconomia', f:'Macroeconomia', c:'Maluf', v:T('33:10'), tp:'macro'},
+  {id:'m-macroex', t:'EXERCÍCIOS MACROECONOMIA', f:'Macroeconomia', c:'Maluf', v:T('33:10'), tp:'macro'},
   {id:'m-rf', t:'Renda Fixa', f:'Renda Fixa', c:'Maluf', v:T('53:16'), tp:'rf'},
   {id:'m-lci', t:'Renda Fixa - LCI LCA CRI/CRA', f:'Renda Fixa', c:'Maluf', v:T('45:36'), tp:'rf'},
   {id:'m-trib', t:'Tributação', f:'Renda Fixa', c:'Maluf', v:T('12:29'), tp:'trib'},
   {id:'m-acoes1', t:'Ações parte I', f:'Ações', c:'Maluf', v:T('36:18'), tp:'acoes'},
   {id:'m-acoes2', t:'Ações parte II', f:'Ações', c:'Maluf', v:T('26:18'), tp:'acoes'},
   {id:'m-deriv', t:'Derivativos', f:'Derivativos', c:'Maluf', v:T('45:31'), tp:'deriv'},
-  {id:'l-opcoes', t:'Tipos de opções', f:'Produtos de Investimentos', c:'Laíra', v:T('29:41'), tp:'deriv'},
+  {id:'m-calc1', t:'Cálculo I', f:'Introdução ao Cálculo', c:'Maluf', v:T('9:11'), tp:'mat'},
+  {id:'m-calc2', t:'Cálculo II', f:'Introdução ao Cálculo', c:'Maluf', v:T('5:55'), tp:'mat'},
   {id:'l-fundos1', t:'Fundos I', f:'Produtos de Investimentos', c:'Laíra', v:T('28:13'), tp:'fundos'},
   {id:'l-fundos2', t:'Fundos II', f:'Produtos de Investimentos', c:'Laíra', v:T('1:20:53'), tp:'fundos'},
   {id:'l-pmf', t:'Produto do Mercado Financeiro', f:'Produtos de Investimentos', c:'Laíra', v:T('1:00:51'), tp:'rf'},
@@ -310,6 +307,7 @@ const LESSONS = [
   {id:'l-gov', t:'Governança', f:'Produtos de Investimentos', c:'Laíra', v:T('12:27'), tp:'acoes'},
   {id:'l-ind', t:'Índices da bolsa', f:'Produtos de Investimentos', c:'Laíra', v:T('27:27'), tp:'acoes'},
   {id:'l-alt', t:'Alternativos', f:'Produtos de Investimentos', c:'Laíra', v:T('1:09:26'), tp:'alt'},
+  {id:'l-opcoes', t:'Tipos de opções', f:'Produtos de Investimentos', c:'Laíra', v:T('29:41'), tp:'deriv'},
   {id:'l-falt1', t:'Fundos Alternativos I', f:'Investimentos Alternativos, Digitais e no Exterior', c:'Laíra', v:T('11:02'), tp:'alt'},
   {id:'l-falt2', t:'Fundos Alternativos II', f:'Investimentos Alternativos, Digitais e no Exterior', c:'Laíra', v:T('1:10:31'), tp:'alt'},
   {id:'l-amer', t:'Alternativos e Americanos', f:'Investimentos Alternativos, Digitais e no Exterior', c:'Laíra', v:T('34:05'), tp:'alt'},
@@ -322,25 +320,24 @@ const LESSONS = [
   {id:'l-tit2', t:'Análise de Título II', f:'Gestão de Risco, Análise de…', c:'Laíra', v:T('29:40'), tp:'carteira'},
 ];
 const MODULES = [
-  ['Maluf','C-PRO I · Professor Marcos Maluf','10 aulas: cálculo e HP12C, macroeconomia, renda fixa, tributação, ações e derivativos'],
-  ['Laíra','C-PRO I · Professora Laíra Aragão','20 aulas: fundos, renda variável, ofertas, alternativos, previdência e gestão de carteira'],
-  ['sim','Simulados','Plataforma de simulados, mais o diagnóstico, os treinos e a reta final do plano'],
+  ['Maluf','C-PRO I · Professor Marcos Maluf','10 aulas: Macroeconomia, Renda Fixa, Ações, Derivativos e Introdução ao Cálculo'],
+  ['Laíra','C-PRO I · Professora Laíra Aragão','20 aulas: Produtos de Investimentos, Investimentos Alternativos, Previdência Complementar e Gestão de Risco'],
+  ['sim','Simulados','O Simulado C-Pro I Dinâmico (40 questões, 2h30). Você escolhe quantos fazer e quando'],
 ];
 const ALL_MODS = MODULES.map(m=>m[0]);
 const mods = a => Array.isArray(a.modules) ? a.modules.filter(m=>ALL_MODS.includes(m)) : ALL_MODS;
 const lessonOn = (L,a) => (L.c==='Maluf'||L.c==='Laíra') ? mods(a).includes(L.c) : true;
 const topicsOn = a => { const t=new Set(); LESSONS.forEach(L=>{ if(L.tp && lessonOn(L,a)) t.add(L.tp); }); return t; };
 const modVideo = k => LESSONS.filter(L=>L.c===k).reduce((s,L)=>s+L.v,0);
-/* E-book (PDF de 133 págs.): seções por tema, lidas depois da aula correspondente.
-   anchors = aulas depois das quais a leitura entra; vale a última que estiver no plano. */
+/* E-book (PDF de 133 págs.): material de apoio, fora do cronograma; só a página própria, com capítulos para marcar. */
 const EBOOK = [
-  {k:'fundos',  t:'Fundos de investimento',               tp:'fundos',   pages:[[2,15]],          anchors:['l-fundos2']},
-  {k:'rf',      t:'Renda fixa e produtos bancários',      tp:'rf',       pages:[[16,27]],         anchors:['m-lci','l-pmf']},
-  {k:'acoes',   t:'Ações, ofertas, governança e índices', tp:'acoes',    pages:[[27,56]],         anchors:['m-acoes2','l-ind']},
-  {k:'deriv',   t:'Derivativos e opções',                 tp:'deriv',    pages:[[62,74]],         anchors:['m-deriv','l-opcoes']},
-  {k:'alt',     t:'Alternativos, digitais e exterior',    tp:'alt',      pages:[[56,62],[74,97]], anchors:['l-ndf']},
-  {k:'prev',    t:'Previdência complementar',             tp:'prev',     pages:[[97,107]],        anchors:['l-prev']},
-  {k:'carteira',t:'Gestão de carteira e risco',           tp:'carteira', pages:[[107,132]],       anchors:['l-tit2']},
+  {k:'fundos',  t:'Fundos de investimento',               pages:[[2,15]]},
+  {k:'rf',      t:'Renda fixa e produtos bancários',      pages:[[16,27]]},
+  {k:'acoes',   t:'Ações, ofertas, governança e índices', pages:[[27,56]]},
+  {k:'deriv',   t:'Derivativos e opções',                 pages:[[62,74]]},
+  {k:'alt',     t:'Alternativos, digitais e exterior',    pages:[[56,62],[74,97]]},
+  {k:'prev',    t:'Previdência complementar',             pages:[[97,107]]},
+  {k:'carteira',t:'Gestão de carteira e risco',           pages:[[107,132]]},
 ];
 const CHAPTERS = {
   fundos:[["Regras de distribuição, documentos e cotas","2–3"],["Administração, gestão e taxas","3–5"],["Classes de fundos e tributação","5–7"],["ETFs e fundos incentivados","8"],["Fundos imobiliários (FII)","8–12"],["FIP, FIDC e ETFs","12–13"],["Clubes de investimento","13–14"],["Carteiras administradas","14–15"]],
@@ -353,9 +350,7 @@ const CHAPTERS = {
 };
 const chKey = (k,i) => `ebc-${k}-${i}`;
 const ebTotals = prog => { let d=0,t=0; const by={}; for(const E of EBOOK){ const n=CHAPTERS[E.k].length; const x=CHAPTERS[E.k].filter((_,i)=>prog[chKey(E.k,i)]).length; by[E.k]={d:x,t:n}; d+=x; t+=n; } return {d,t,by}; };
-const pagesCount = r => r.reduce((n,[a,b])=>n+b-a+1,0);
 const pagesTxt = r => r.map(([a,b])=>a===b?`${a}`:`${a}–${b}`).join(' e ');
-const MIN_PAGINA = {nunca:3, javi:2, domino:1};
 const SIM_URL = 'https://simulados.omarcosmaluf.com/simulados/dinamico/cproi';
 const SIM_RES = 'https://simulados.omarcosmaluf.com/simulados/resultados?evaluation_type=dynamic_cproi';
 const FACTOR = {nunca:2.0, javi:1.5, domino:1.0};
@@ -387,55 +382,29 @@ const state = {
 const canEdit = p => state.isAdmin || state.mine===p;
 
 function blankAnswers(){
-  return { certs:[], trab:'', ratings:{}, hp:'', hours:'', days:['1','2','3','4','6'], speed:'', examMode:'', examDate:'', blackouts:[], modules:ALL_MODS.slice(), start:todayS() };
+  return { certs:[], trab:'', ratings:{}, hours:'', days:['1','2','3','4','6'], speed:'', examMode:'', examDate:'', blackouts:[], modules:ALL_MODS.slice(), simN:'', simWhen:'', start:todayS() };
 }
 
 /* ---------- motor do plano ---------- */
 function buildItems(a){
   const sp = Number(a.speed)||1;
-  const f = tp => tp ? FACTOR[a.ratings[tp]||'javi'] : 1;
+  const f = tp => FACTOR[a.ratings[tp]||'javi'];
   const items = [];
-  const useSim = mods(a).includes('sim');
-  const incl = new Set(LESSONS.filter(L=>lessonOn(L,a)).map(L=>L.id));
-  const order = Object.fromEntries(LESSONS.map((L,i)=>[L.id,i]));
-  // âncora de cada seção do e-book: a última aula (na ordem do curso) que está no plano
-  const ebAt = {};
-  for(const E of EBOOK){
-    const on = E.anchors.filter(id=>incl.has(id)).sort((x,y)=>order[x]-order[y]);
-    if(on.length) (ebAt[on[on.length-1]] ||= []).push(E);
-  }
   for(const L of LESSONS){
     if(!lessonOn(L,a)) continue;
-    const h = (L.v/3600)/sp * f(L.tp);
-    items.push({id:L.id, t:L.t, c:L.c, f:L.f, v:L.v, h: Math.max(h, L.tp? 0.15 : 0.05), kind:'aula', tp:L.tp});
-    if(L.id==='m-calc2' && (a.ratings.mat==='nunca' || a.hp==='nao')){
-      items.push({id:'hp-pratica', t: a.hp==='nao' ? 'Instalar um emulador de HP12C e refazer os exemplos das aulas' : 'Prática na HP12C: refazer os exemplos das aulas', c:'Prática', h:1.5, kind:'pratica'});
-    }
-    for(const E of (ebAt[L.id]||[])){
-      const n = pagesCount(E.pages);
-      items.push({id:'eb-'+E.k, t:`E-book: ${E.t}`, c:'E-book', h: Math.max(0.25, n*MIN_PAGINA[a.ratings[E.tp]||'javi']/60), kind:'ebook',
-        pages:E.pages, note:`Págs. ${pagesTxt(E.pages)} do e-book (${n} páginas). Leia depois da aula e refaça os exemplos de cálculo.`});
-    }
-    if(L.id==='pp2' && useSim){
-      items.push({id:'sim-diag', t:'Simulado diagnóstico (40 questões, até 2h30)', c:'Simulados', h:2.5, kind:'sim',
-        note:'Não é pra medir nota. É pra ver o formato da prova antes de estudar e testar o login da plataforma de simulados.'});
-    }
+    items.push({id:L.id, t:L.t, c:L.c, f:L.f, v:L.v, h: Math.max((L.v/3600)/sp * f(L.tp), 0.15), kind:'aula', tp:L.tp});
   }
-  if(!useSim) return items;
-  // simulado de manutenção a cada ~8h de conteúdo
-  const out=[]; let acc=0, n=1; let started=false;
+  // simulados: só os que ela escolheu, espalhados ao longo do estudo ou todos no fim
+  const n = mods(a).includes('sim') ? Math.max(0, Number(a.simN)||0) : 0;
+  const mk = k => ({id:'sim-'+k, t:`Simulado C-Pro I Dinâmico (${k} de ${n})`, c:'Simulados', h:2.5, kind:'sim',
+    note:'40 questões, limite de 2h30, prova mais revisão dos erros. O simulado gera questões novas a cada vez.'});
+  const content = items.reduce((x,i)=>x+i.h,0);
+  const out=[]; let acc=0, k=0;
   for(const it of items){
-    out.push(it);
-    if(it.id==='sim-diag'){ started=true; continue; }
-    if(!started) continue;
-    acc += it.h;
-    if(acc>=8){ out.push({id:'sim-m'+n, t:`Simulado de treino ${n} (40 questões) + revisão dos erros, 2h30 no total`, c:'Simulados', h:2.5, kind:'sim'}); n++; acc=0; }
+    out.push(it); acc += it.h;
+    while(a.simWhen!=='final' && k<n && acc >= content*(k+1)/n - 1e-9) out.push(mk(++k));
   }
-  const content = items.reduce((s,i)=>s+i.h,0);
-  const finalH = Math.max(8, Math.round(content*0.25));
-  const nf = Math.ceil(finalH/2.5);
-  for(let k=1;k<=nf;k++) out.push({id:'sim-f'+k, t:`Simulado completo ${k} (40 questões) + revisão dos erros, 2h30 no total`, c:'Reta final', h:2.5, kind:'sim'});
-  out.push({id:'rev-vespera', t:'Véspera: revisão leve da lista de erros e descanso', c:'Reta final', h:1, kind:'sim'});
+  while(k<n) out.push(mk(++k));
   return out;
 }
 
@@ -617,6 +586,16 @@ function renderForm(p){
         ${MODULES.map(([k,l,d])=>bub('modules',k,`<strong>${l}</strong><br><small style="color:var(--muted)">${d}${(k==='Maluf'||k==='Laíra')?` · ${fv(modVideo(k))} de vídeo`:''}</small>`,mods(a).includes(k),'checkbox')).join('')}
       </div></div></div>
 
+    ${mods(a).includes('sim')?`<div class="q">${Q()}<div class="qbody">
+      <p class="qt">Quantos simulados você quer fazer?</p>
+      <p class="qh">O portal tem um só, o Simulado C-Pro I Dinâmico (40 questões, 2h30), que gera questões novas a cada vez. Cada um ocupa 2h30 no plano, com a revisão dos erros.</p>
+      <div class="opts">${[1,2,3,4,5,6].map(n=>bub('simN',n,String(n),String(a.simN)===String(n))).join('')}</div>
+      <p class="qt" style="margin-top:14px">Quando fazer?</p>
+      <div class="opts">
+        ${bub('simWhen','longo','Espalhados ao longo do estudo, o último no fim',a.simWhen==='longo')}
+        ${bub('simWhen','final','Todos no fim, depois das aulas',a.simWhen==='final')}
+      </div></div></div>`:''}
+
     <div class="q">${Q()}<div class="qbody">
       <p class="qt">Quais certificações ANBIMA você já tem?</p>
       <p class="qh">Marque todas. Quem já tem C-PRO R parte com vantagem em renda fixa, fundos e regulação.</p>
@@ -645,14 +624,6 @@ function renderForm(p){
           <td>${bub('r_'+k,'javi','<span class="sr">Já vi</span>',a.ratings[k]==='javi')}</td>
           <td>${bub('r_'+k,'domino','<span class="sr">Domino</span>',a.ratings[k]==='domino')}</td></tr>`).join('')}</tbody>
       </table></div></div></div>`:''}
-
-    ${on.has('mat')?`<div class="q">${Q()}<div class="qbody">
-      <p class="qt">Você tem uma HP12C?</p>
-      <div class="opts">
-        ${bub('hp','fisica','Sim, a calculadora',a.hp==='fisica')}
-        ${bub('hp','app','Uso app no celular',a.hp==='app')}
-        ${bub('hp','nao','Não tenho',a.hp==='nao')}
-      </div></div></div>`:''}
 
     <div class="q">${Q()}<div class="qbody">
       <p class="qt">Quantas horas por semana você estuda de verdade?</p>
@@ -739,7 +710,8 @@ function renderForm(p){
     const mr = TOPICS.filter(([k])=>onT.has(k) && !a.ratings[k]);
     f.querySelectorAll('tr[data-tp]').forEach(tr=>tr.classList.toggle('miss', !a.ratings[tr.dataset.tp]));
     if(mr.length) miss.push(`${mr.length} tema(s) da tabela`);
-    if(onT.has('mat') && !a.hp) miss.push('HP12C');
+    if(mods(a).includes('sim') && !(Number(a.simN)>0)) miss.push('quantos simulados');
+    if(mods(a).includes('sim') && !a.simWhen) miss.push('quando fazer os simulados');
     if(!a.hours) miss.push('horas por semana');
     if(!a.days.length) miss.push('dias de estudo');
     if(!a.speed) miss.push('velocidade');
@@ -869,15 +841,14 @@ function renderPlan(p, readOnly){
     ${certTxt||trabTxt?`<p>${certTxt} ${trabTxt}</p>`:''}
     <h2>Cronograma semana a semana</h2>
     ${weekHtml}
-    <h2>Como usar o e-book</h2>
+    ${mods(a).includes('sim')?`<h2>Sobre os simulados</h2>
     <div class="rules">
-      <p>O e-book resume o curso inteiro. Cada seção entra no cronograma logo depois da aula do mesmo tema: assista, depois leia a seção, anotando o que errar nos exemplos.</p>
-      ${mods(a).includes('sim')?`<p>Faça o diagnóstico logo no começo, antes de estudar. O simulado dinâmico gera 40 questões aleatórias, com limite de 2h30 e o progresso salvo sozinho: reserve o tempo todo e uma conexão estável. Ele serve pra conhecer o formato da prova nova, com diálogo de cliente e árvore de decisão, e pra confirmar que o login da plataforma de simulados funciona.</p>
-      <p>Seus resultados e o detalhe de cada simulado ficam em <a href="${SIM_RES}" target="_blank" rel="noopener">Meus resultados ↗</a>.</p>
+      <p>O simulado dinâmico gera 40 questões aleatórias, com limite de 2h30 e o progresso salvo sozinho: reserve o tempo todo e uma conexão estável. Seus resultados e o detalhe de cada simulado ficam em <a href="${SIM_RES}" target="_blank" rel="noopener">Meus resultados ↗</a>.</p>
       <p>Toda questão errada vai pra uma lista com o tema ao lado. No fim de cada semana, revise a lista inteira, não só os erros novos.</p>
-      <p>O banco de questões repete bastante. Nota alta depois de vários simulados pode ser só memória. O sinal confiável é acertar questão que você nunca viu.</p>`:''}
-    </div>
-    <p style="color:var(--muted);font-size:14px;margin-top:18px">Como o tempo é calculado: cada hora de vídeo, na velocidade escolhida, vira ~2h de estudo em tema que você nunca viu, ~1h30 no que já viu e ~1h no que domina. O e-book conta ~2 min por página (3 min se for tema novo, 1 min se você domina). Aula longa que não cabe num dia continua de onde parou, sem repetir nem pular trecho. Feriados não estão descontados; use como dia extra.</p>
+      <p>O banco de questões repete bastante. Nota alta depois de vários simulados pode ser só memória. O sinal confiável é acertar questão que você nunca viu.</p>
+    </div>`:''}
+    <p style="color:var(--muted);font-size:14px">O e-book C-PRO I fica fora do cronograma, como material de apoio: use o card ou o botão E-book e vá marcando os capítulos que ler.</p>
+    <p style="color:var(--muted);font-size:14px;margin-top:18px">Como o tempo é calculado: cada hora de vídeo, na velocidade escolhida, vira ~2h de estudo em tema que você nunca viu, ~1h30 no que já viu e ~1h no que domina. Aula longa que não cabe num dia continua de onde parou, sem repetir nem pular trecho. Feriados não estão descontados; use como dia extra.</p>
     <div class="toolbar">
       ${readOnly?'':'<button class="btn ghost" id="edit">Refazer o cartão inicial</button>'}
       <button class="btn ghost" id="copy">Copiar resumo para o WhatsApp</button>
@@ -885,7 +856,6 @@ function renderPlan(p, readOnly){
   app.querySelectorAll('[data-chk]').forEach(c=>c.addEventListener('change',()=>{
     const id=c.dataset.chk; prof.progress = prof.progress||{};
     if(c.checked) prof.progress[id]=true; else delete prof.progress[id];
-    if(id.startsWith('eb-')){ const k=id.slice(3); (CHAPTERS[k]||[]).forEach((_,i)=>{ if(c.checked) prof.progress[chKey(k,i)]=true; else delete prof.progress[chKey(k,i)]; }); }
     persist(p); render();
   }));
   app.querySelector('#ebcard').onclick=()=>{ state.view='ebook'; render(); window.scrollTo({top:0}); };
@@ -896,17 +866,12 @@ function renderPlan(p, readOnly){
 function renderEbook(p, readOnly){
   const ensure = () => { if(!state.profiles[p]) state.profiles[p]={progress:{},savedAt:new Date().toISOString()}; state.profiles[p].progress ||= {}; return state.profiles[p]; };
   const prog = state.profiles[p]?.progress || {};
-  const a = state.profiles[p]?.answers;
-  const plan = a ? computePlan(a) : null;
-  const wkOf = plan ? weekGroups(plan).firstWeek : {};
   const t = ebTotals(prog); const pct = Math.round(100*t.d/t.t);
   const secHtml = EBOOK.map(E=>{
     const chs = CHAPTERS[E.k]; const st=t.by[E.k];
-    const inPlan = plan ? plan.items.some(i=>i.id==='eb-'+E.k) : true;
-    const wk = wkOf['eb-'+E.k];
-    const meta = `Págs. ${pagesTxt(E.pages)}${plan ? (inPlan ? (wk?` · no plano: semana de ${fd(pd(wk))}`:'') : ' · fora do plano (módulo não escolhido)') : ''}`;
+    const meta = `Págs. ${pagesTxt(E.pages)}`;
     const firstOpen = st.d<st.t && EBOOK.find(x=>t.by[x.k].d<t.by[x.k].t)===E;
-    return `<details class="esec ${st.d===st.t?'full':''} ${inPlan?'':'out'}" data-k="${E.k}" ${firstOpen?'open':''}>
+    return `<details class="esec ${st.d===st.t?'full':''}" data-k="${E.k}" ${firstOpen?'open':''}>
       <summary><h3>${esc(E.t)}</h3><span class="cnt">${st.d}/${st.t}</span><span class="meta">${esc(meta)}</span><span class="pbar"><i style="width:${Math.round(100*st.d/st.t)}%"></i></span></summary>
       <ul class="chs">${chs.map(([title,pg],i)=>{ const on=!!prog[chKey(E.k,i)]; return `<li class="chapli" data-k="${E.k}" data-i="${i}">
         <div class="chap ${on?'rd':''}" data-i="${i}">
@@ -943,8 +908,7 @@ function renderEbook(p, readOnly){
     });
   };
   const save = (k)=>{
-    const prof=ensure(); const pr=prof.progress; const all=CHAPTERS[k].every((_,i)=>pr[chKey(k,i)]);
-    if(all) pr['eb-'+k]=true; else delete pr['eb-'+k];
+    const prof=ensure();
     prof.savedAt=new Date().toISOString(); persist(p); refresh();
   };
   app.querySelectorAll('.chap input').forEach(inp=>inp.addEventListener('change',()=>{
